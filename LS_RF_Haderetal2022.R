@@ -14,9 +14,9 @@
 # https://www.guru99.com/r-random-forest-tutorial.html
 
 
-######################
-#### 1 Data preparation ---------------------------------------------------------
-######################
+####
+## 1 Data preparation ---------------------------------------------------------
+####
 # Go to URL of local folder and select and Copy. (G:\IKC\International projects\Kirkuk air pollution\Data\pm10)
 
 # Go to URL of local folder and select and Copy.(C:/LS_RF)
@@ -360,7 +360,7 @@ Information::create_infotables(vdi_train %>% dplyr::select(-DIA_ARQUIVO,
                                # -new_old),
                                y = 'payment_vdi')
 
-####
+#### 
 ## 3 Modeling ---------------------------------------------------------
 ####
 
@@ -389,7 +389,7 @@ rf_defaultN$finalModel        # Results: mtry= 20, Number of trees: 500, OOB err
 rf_defaultN$results 
 
 # The algorithm uses 500 trees and tested three different values of mtry: 2, 20, 39.
-# The final value used for the model was mtry = 20 with an accuracy of 0.9699824  Kappa =0.7631195. Let's try to get a higher score.
+# The final value used for the model was mtry = 20 with an accuracy of 0.9699824  Kappa = 0.7631195. Let's try to get a higher score.
 
 # https://www.rdocumentation.org/packages/randomForest/versions/4.6-14/topics/randomForest
 
@@ -418,18 +418,18 @@ rf_mtry <- train(Training~.,
                  nodesize = 14,
                  ntree = 500)
 print(rf_mtry)
-rf_mtry$bestTune$mtry 
+rf_mtry$bestTune$mtry # mtry = 21, 0.9700430 Accuracy, Kappa = 0.7627416
 
 # We now can store it and use it when we need to tune the other parameters.
-max(rf_mtry$results$Accuracy)
+max(rf_mtry$results$Accuracy) # accuracy
 best_mtry <- rf_mtry$bestTune$mtry 
-best_mtry
+best_mtry # mtry
 
-mtryjune <- ggplot(data=rf_mtry, aes(x=mtry,y=Accuracy)) #ggplot2 better visualisation
-mtryjune + xlab ("#mtry")
+mtryjune <- ggplot(data=rf_mtry, aes(x=mtry,y=Accuracy)) #ggplot2 better visualization
+mtryjune + xlab ("#mtry") 
 
 
-# 3.3 Search best maxnodes  ----
+# 3.3 Search best maxnodes ----
 store_maxnode <- list()
 tuneGrid <- expand.grid(.mtry = best_mtry)
 for (maxnodes in c(5: 30)) {
@@ -459,11 +459,11 @@ maxnodesjune <- ggplot(data=rf_maxnode$finalModel) #ggplot2 better visualised
 maxnodesjune + xlab ("#mtry")
 
 
-# 3.4 Hyperparameterisation ----
+# 3.4 Hyperparameterisation (search) ----
 # We have our final model. Thus, we can train the random forest with the following parameters:
 
 # ntree = default (500) trees will be trained
-# mtry = 17: 17 features is chosen for each iteration
+# mtry = 21: 21 features is chosen for each iteration
 
 fit_rf_final <- train(Training~., 
                       data=scaled_t,
@@ -474,13 +474,13 @@ fit_rf_final <- train(Training~.,
                       importance = TRUE
 )
 
-fit_rf_final
-print(fit_rf_final)
-varImp(fit_rf_final)
-plot(varImp(fit_rf_final), main="RF tuned model")
+fit_rf_final # mtry = 22, 0.9703476 Accuracy
+print(fit_rf_final) 
+varImp(fit_rf_final) # l3 (land use 3) is the most important variable, following by SLOPE
+ggplot(varImp(fit_rf_final), main="RF tuned model") # plot the variable importance
 
 
-fit_rf_final$results
+fit_rf_final$results # to check all the mtry and its accuracy
 
 # Tune ntree 
 # Here we obtain the best ntree vs accuracy of the model for OOB, non landslide and landslide
@@ -490,7 +490,7 @@ oob.error.data <- data.frame(
                   Error=c(fit_rf_final$finalModel$err.rate[,"OOB"],
                           fit_rf_final$finalModel$err.rate[,"no"],
                           fit_rf_final$finalModel$err.rate[,"yes"]))
-
+# Plot of the OOB, non-landslide and landslide error vs ntree
 ggplot(data=oob.error.data, aes(x=Trees, y=Error)) + 
   geom_line(aes(color=Type))
 
@@ -500,7 +500,14 @@ p1_final<-predict(fit_rf_final, scaled_tst[,c(-1)], type = "raw")
 confusionMatrix(p1_final, as.factor(scaled_tst$Testing))  # using more deep tree, the accuracy linearly increases 
 # Accuracy : 0.9301
 
-# 3.5 Random search method ----
+#Confusion Matrix and Statistics
+             #Reference
+#Prediction   no  yes
+#       no  1819   37
+#       yes  111  150
+
+# 3.5 Hyperparameterisation (random) ----
+
 control <- trainControl(method='repeatedcv', 
                         number=10, 
                         repeats=3,
