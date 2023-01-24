@@ -17,7 +17,6 @@
 ####
 ## 1 Data preparation ---------------------------------------------------------
 ####
-# Go to URL of local folder and select and Copy. (G:\IKC\International projects\Kirkuk air pollution\Data\pm10)
 
 # Go to URL of local folder and select and Copy.(C:/LS_RF)
 path=readClipboard()
@@ -353,12 +352,8 @@ sum(is.na(scaled_tst))
 # scaled_tst <- na.omit(scaled_tst)
 
 # Information value to check predictor variable
-Information::create_infotables(vdi_train %>% dplyr::select(-DIA_ARQUIVO,
-                                                           # -date,
-                                                           -CONTRATO,
-                                                           -DT_ULTIMA_DISTRIB),
-                               # -new_old),
-                               y = 'payment_vdi')
+Information::create_infotables(scaled_train, y = 'Training') # 3 variables with both positive and > 1 IV)
+# the info tables show three potential predictable variables: SLOPE, l3 and TWI, which matches with the previous plots
 
 #### 
 ## 3 Modeling ---------------------------------------------------------
