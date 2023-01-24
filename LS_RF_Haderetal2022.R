@@ -508,6 +508,11 @@ control <- trainControl(method='repeatedcv',
                         repeats=3,
                         search = 'random')    
 
+# unregister_dopar <- function() {
+#   env <- foreach:::.foreachGlobals
+#   rm(list=ls(name=env), pos=env)
+# }
+
 # Random generate 15 mtry values with tune Length = 15
 set.seed(1)
 rf_random <- train(Training~., 
@@ -518,14 +523,21 @@ rf_random <- train(Training~.,
                    importance = TRUE)
 print(rf_random)
 varImp(rf_random)
-plot(varImp(rf_random))
 plot(rf_random)
-plot(varImp(rf_random), main="RF random model")
+ggplot(varImp(rf_random), main="RF tuned model") # plot the variable importance
 
 # Evaluate the model
 p1_random<-predict(rf_random, scaled_tst[,c(-1)], type = "raw")
 confusionMatrix(p1_random, as.factor(scaled_tst$Testing))  # using more deep tree, the accuracy linearly increases! 
-# Accuracy : 0.9225
+# Accuracy : 0.9268
+
+# Confusion Matrix and Statistics
+# 
+#             Reference
+# Prediction   no  yes
+#       no  1810   35
+#      yes  120  152
+
 
 # fit_rf_final is the best model
 
