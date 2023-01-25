@@ -508,10 +508,6 @@ control <- trainControl(method='repeatedcv',
                         repeats=3,
                         search = 'random')    
 
-# unregister_dopar <- function() {
-#   env <- foreach:::.foreachGlobals
-#   rm(list=ls(name=env), pos=env)
-# }
 
 # Random generate 15 mtry values with tune Length = 15
 set.seed(1)
@@ -557,17 +553,17 @@ confusionMatrix(p1_random, as.factor(scaled_tst$Testing))  # using more deep tre
 # https://stackoverflow.com/questions/46124424/how-can-i-draw-a-roc-curve-for-a-randomforest-model-with-three-classes-in-r
 library(pROC)
 #install.packages("pROC")
-# the model is used to predict the test data. However, you should ask for type="prob" here
+# the model is used to predict the test data. However, we should call for type = "prob" here
 predictions1 <- as.data.frame(predict(fit_rf_final, scaled_test, type = "prob"))
 
-##  Since you have probabilities, use them to get the most-likely class.
+##  Since we have probabilities, we use them to get the most-likely class.
 # predict class and then attach test class
 predictions1$predict <- names(predictions1)[1:2][apply(predictions1[,1:2], 1, which.max)]
 predictions1$observed <- as.factor(scaled_tst$Testing)
 head(predictions1)
 
-#    Now, let's see how to plot the ROC curves. For each class, convert the multi-class problem into a binary problem. Also, 
-#    call the roc() function specifying 2 arguments: i) observed classes and ii) class probability (instead of predicted class).
+# Now, let's plot the ROC curves. For each class, convert the multi-class problem into a binary problem. Also, 
+# call the roc() function specifying 2 arguments: i) observed classes and ii) class probability (instead of predicted class).
 # 1 ROC curve, Moderate, Good, UHeal vs non Moderate non Good non UHeal
 roc.yes <- roc(ifelse(predictions1$observed=="yes","no-yes","yes"), as.numeric(predictions1$yes))
 roc.no <- roc(ifelse(predictions1$observed=="no","no-no", "no"), as.numeric(predictions1$no))
@@ -578,12 +574,12 @@ lines(roc.yes, col = "red")
 par(pty = "s") #to remove the ugly's spaces at each side
 plot(roc.yes, col = "red", plot=TRUE, legacy.axes=TRUE) #to remove the ugly's spaces at each side and put 1-specificity
 
-# calculating the values of AUC for ROC curve
+# Calculating the values of AUC for ROC curve
 results= c("Yes AUC" = roc.yes$auc) #,"No AUC" = roc.no$auc)
 print(results)
 legend("right",c("AUC = 0.95 "),fill=c("red"),inset = (0.01))
 
-#Important note: In previous course (Prediction using ANN "regression") prediction rate = 0.80 using .
+# Train the model with all landslides
 summary(All_incidents)
 
 All_incidents <-na.omit(All_incidents)
@@ -597,14 +593,15 @@ fit.rfAll<- train(Slides~.,
                   importance = TRUE)
 
 X.rfAll = varImp(fit.rfAll)
-ggplot(X.rfAll, top = 20) ###it can be worked
+ggplot(X.rfAll, top = 20) # top 20 importance variables of the final model
 X.rfAll
+
 # Plot graph
 # 1. Open jpeg file
 jpeg("varImportance All RF.jpg", width = 800, height = 500)
 # 2. Create the plot
 ggplot(X.rfAll,main="varImportanceAll RF" )
-plot(fit.rfAll$results)
+ggplot(fit.rfAll$results)
 
 colnames(alljune)[colnames(alljune)=="l3"] <- "Population on slopes"
 
@@ -612,10 +609,10 @@ colnames(alljune)[colnames(alljune)=="l3"] <- "Population on slopes"
 dev.off()
 
 
-# 6  Produce prediction map using Raster data ---------------------------
+# 5  Deployment - Prediction map -----------------------------
 
 
-# 6-1 Import and process thematic maps ------------------------------------
+# 5.1 Spatial ETL - thematic maps ----
 
 
 #Produce LSM map using Training model results and Raster layers data
@@ -630,20 +627,20 @@ library(rgdal)
 # load all the data
 
 # Load the Raster data
-ELEV = raster("C:/LS_RF/Raster/MDE_10px_Corrigido.tif")  
-SLOPE= raster("C:/LS_RF/Raster/Declividade_10px_Corrigido.tif") 
-PROFC= raster("C:/LS_RF/Raster/ProfileCurvature_10px_Corrigido.tif") 
-TWI= raster("C:/LS_RF/Raster/TWI_Corrigido.tif") 
-PLANC=raster("C:/LS_RF/Raster/PlanCurvature_10px_Corrigido.tif")
+ELEV = raster("C:/LS_RF/Raster/MDE_10px.tif")  
+SLOPE= raster("C:/LS_RF/Raster/Slope_10px.tif") 
+PROFC= raster("C:/LS_RF/Raster/ProfileCurvature_10px.tif") 
+TWI= raster("C:/LS_RF/Raster/TWI_10px.tif") 
+PLANC=raster("C:/LS_RF/Raster/PlanCurvature_10px.tif")
 ASP=raster("C:/LS_RF/Raster/ASP_10px.tif")
-LANDUSE=raster("C:/LS_RF/Raster/LandUse_10px.tif")
-NDVI=raster("C:/LS_RF/Raster/NDVI10px_Reprojetado.tif") 
-GEO=raster("C:/LS_RF/Raster/Geologia10px_IPT1986b.tif") 
-GEOM=raster("C:/LS_RF/Raster/Geomorfologia10px_RR.tif") 
+LANDUSE=raster("C:/LS_RF/Raster/Landuse_10px.tif")
+NDVI=raster("C:/LS_RF/Raster/NDVI_10px.tif") 
+GEO=raster("C:/LS_RF/Raster/Geology_10px.tif") 
+GEOM=raster("C:/LS_RF/Raster/Geom_10px.tif") 
 
 
 
-# check attributes and projection and extent
+# Check attributes, projection and extent
 extent(ELEV)
 extent(SLOPE)
 extent(TWI)
@@ -656,7 +653,7 @@ extent(GEOM)
 extent(NDVI)
 
 
-# if you have different extent, then try to Resample them using the smallest area
+# Now we need to resample all the rasters using the smallest area
 ELEV_r <- resample(ELEV,GEO, resample='bilinear') 
 SLOPE_r <- resample(SLOPE,GEO, resample='bilinear') 
 TWI_r <- resample(TWI,GEO, resample='bilinear') 
@@ -667,10 +664,10 @@ GEOM_r <- resample(GEOM,GEO, resample='bilinear')
 NDVI_r <- resample(NDVI,GEO, resample='bilinear') 
 ASP_r <- resample(ASP,GEO, resample='bilinear') 
 
-extent(ASP_r) # check the new extent
+extent(ASP_r) # to check the new extent
 extent(GEO)
 
-# write to a new geotiff file
+# Write to a new Geotiff file
 # Create new folder in WD using manually or in R studio (lower right pan)
 writeRaster(ASP_r,filename="C:/LS_RF/resampled/ASP.tif", format="GTiff", overwrite=TRUE) 
 writeRaster(PROFC_r,filename="C:/LS_RF/resampled/PROFC.tif", format="GTiff", overwrite=TRUE)
@@ -690,14 +687,14 @@ writeRaster(NDVI_r,filename="C:/LS_RF/resampled/NDVI.tif", format="GTiff", overw
 #head(Stack_List.df,1)
 
 
-## stack multiple raster files
-Stack_List= list.files(path = "C:/LS_RF/resampled/",pattern = "tif$", full.names = TRUE) #mudar pra = se der errado
-Rasters=stack(Stack_List) #mudar pra = se der errado
+## Stack multiple raster files
+Stack_List = list.files(path = "C:/LS_RF/resampled/", pattern = "tif$", full.names = TRUE) #mudar pra = se der errado
+Rasters = stack(Stack_List) #mudar pra = se der errado
 
 names(Rasters)
 
 
-# 6-1-1 Convert rasters to dataframe with Long-Lat -----------------------
+# 5.2 Convert rasters to dataframe with Long-Lat ----
 #Convert raster to dataframe with Long-Lat
 Rasters.df = as.data.frame(Rasters, xy = TRUE, na.rm = TRUE)
 head(Rasters.df,1)
@@ -715,7 +712,7 @@ head(Rasters.df,1)
 Rasters.df_N <- Rasters.df[,c(-11,-12)] # remove x, y
 
 
-# 6-1-2 Dealing with Categorial data --------------------------------------
+# 5.3 Dealing with Categorial data ----
 
 
 # Dealing with Categorial data (Converting numeric variable into groups in R)
@@ -803,7 +800,7 @@ Rasters.df_N<- Rasters.df_N[,-2] #REMOVE GEOM
 str(Rasters.df_N)
 
 
-# 6-1-3 Scale the numeric variables --------------------------------------
+# 5.4 Scale the numeric variables --------------------------------------
 
 # Check the relationship between the numeric varaibles, Scale the numeric var first!
 maxss <- apply(Rasters.df_N, 2, max) 
@@ -831,13 +828,13 @@ proj4string(r_ave_no)=CRS(projection(ELEV))
 
 # Plot Maps
 spplot(r_ave_yes, main="Landslides SM prob using RF")
-writeRaster(r_ave_yes,filename="RunX Prediction_RF Tunned_LandslidesYes prob SMJune.tif", format="GTiff", overwrite=TRUE) 
+writeRaster(r_ave_yes,filename="RunX Prediction_RF Tunned_LandslidesYes prob SM.tif", format="GTiff", overwrite=TRUE) 
 
 spplot(r_ave_no, main="Non Slide prob RF")
 writeRaster(r_ave_no,filename="RunX Prediction_RF Tunned_Non Slide prob SM.tif", format="GTiff", overwrite=TRUE) 
 
 
-# PRODUCE CLASSIFICATION MAP
+# 5.5 Producing classification map ----
 #Prediction at grid location
 p3<-as.data.frame(predict(fit.rfAll, Rasters.df_N_scaled, type = "raw"))
 summary(p3)
@@ -847,7 +844,7 @@ Rasters.df$Levels_Slide_No_slide<-p3$`predict(fit.rfAll, Rasters.df_N_scaled, ty
 head(Rasters.df, n=2)
 
 # Import levels ID file 
-ID<-read.csv("C:/LS_RF/Excel/Levels_key.csv", header = TRUE, sep = ",")
+ID<-read.csv("C:/LS_RF/Data/Levels_key.csv", header = TRUE, sep = ",")
 
 # Join landuse ID
 grid.new<-join(Rasters.df, ID, by="Levels_Slide_No_slide", type="inner") 
@@ -864,8 +861,8 @@ r_ave_Slide_No_slide <- rasterFromXYZ(as.data.frame(x)[, c("x", "y", "Level_ID")
 # borrow the projection from Raster data
 proj4string(r_ave_Slide_No_slide)=CRS(projection(ELEV)) # set it to lat-long
 
-# Export final prediction map as raster TIF ---------------------------
-# write to a new geotiff file
+# 6. Exporting prediction map as raster TIF ---------------------------
+# write to a new Geotiff file
 writeRaster(r_ave_Slide_No_slide,filename="Run4 Classification_Map RF Tunned SLIDE_NO SLIDE.tif", format="GTiff", overwrite=TRUE) 
 
 
@@ -886,7 +883,7 @@ jpeg("Prediction_Map RF_Landslide .jpg", width = 1000, height = 700)
 LU_ave
 dev.off()
 
-##########DDDDDDDDDDDDOOOOOOOOOOOOOOOONNNNNNNNNNNNNNEEEEEEEEE :) :)
+########## DOOOOOOONE! :) :)
 
 
 
