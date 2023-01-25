@@ -20,4 +20,4 @@ There are three .csv files, the training and the testing data (already ramdomly 
 In this folder you can find all the thematic maps (or independent variables) for the deployment of the model in .tif format
 
 ## Resampled folder --
-In this folder you can find all the resampled raster by the smallest 
+In this folder you can find all raster resampled by the smallest raster. This procedure is performed in the code, as well as writing the raster.
