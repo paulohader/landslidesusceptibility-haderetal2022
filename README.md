@@ -13,11 +13,11 @@ The script is organised into sections and subsections as a maximum level (e.g: 1
 # Files 
 You need to download the LS_RF folder and put it in your C: directory for the code to run smoothly.
 
-## Data folder --
+### Data folder --
 There are three .csv files, the training and the testing data (already ramdomly splitted), and the colour palette for the final map. The training and testing data were ramdomly splitted in the QGIS software with the LaGriSU v 0.2 (Landslide Grid and Slope Units) tool (https://github.com/Althuwaynee/LaGriSU_Landslide-Grid-and-Slope-Units-QGIS_ToolPack)
 
-## Raster folder --
+### Raster folder --
 In this folder you can find all the thematic maps (or independent variables) for the deployment of the model in .tif format
 
-## Resampled folder --
+### Resampled folder --
 In this folder you can find all raster resampled by the smallest raster. This procedure is performed in the code, as well as writing the raster.
