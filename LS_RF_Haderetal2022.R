@@ -639,7 +639,6 @@ GEO=raster("C:/LS_RF/Raster/Geology_10px.tif")
 GEOM=raster("C:/LS_RF/Raster/Geom_10px.tif") 
 
 
-
 # Check attributes, projection and extent
 extent(ELEV)
 extent(SLOPE)
