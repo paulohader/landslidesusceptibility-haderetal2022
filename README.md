@@ -1,4 +1,4 @@
-# landslidesusceptibility-haderetal2022
+# Landslide susceptibility map built through machine learning (random forest algorithm)
    ![image](https://user-images.githubusercontent.com/122403781/214556273-1dee6834-f56e-40db-8136-168ccb4bb3ff.png)
 
 
