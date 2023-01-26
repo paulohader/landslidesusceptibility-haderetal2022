@@ -11,6 +11,7 @@
 
 # References
 
+# Dr. Omar Althywanne both partnership (many thanks!) and his course https://www.udemy.com/course/prediction-maps-using-xgboost-knn-nb-ensemble-rf-in-gis/
 # https://www.guru99.com/r-random-forest-tutorial.html
 
 
