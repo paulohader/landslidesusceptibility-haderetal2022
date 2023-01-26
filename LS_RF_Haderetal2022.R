@@ -128,19 +128,8 @@ data_train = cbind(data_train, flags) # combine the GEOM with original data
 table(data_train$gm)
 # Remove the original landuse, geo, geom and related with missing data
 data_train[,c('LANDUSE', 'GEO', 'GEOM', 'g15', 'gm2', 'l4', 'gm7', 'g14', 'gm5')] <- list(NULL)
-# data_train <- data_train[,-7] # to remove landuse
-# data_train <- data_train[,-8] # to remove GEO
-# data_train <- data_train[,-7] # to remove Geom
-# data_train <- data_train[,-39] # to remove g15
-# data_train <- data_train[,-40] # to remove gm2
-# data_train <- data_train[,-19] # to remove l4
-# data_train <- data_train[,-43] # to remove gm7
-# data_train <- data_train[,-37] # to remove g14
-# 
-# data_train <- data_train[,-39] # to remove gm2
-# data_train <- data_train[,-43] # to remove gm7
-# data_train <- data_train[,-37] # to remove g14
-# data_train <- data_train[,-40] # to remove gm5
+# data_train <- data_train[,-7] # to remove by position
+
 summary(data_train)
 
 # Count the number of 1 and 0 elements with the values of dependent variable
@@ -251,22 +240,8 @@ data_test = cbind(data_test, flags) # combine the GEOM with original data
 summary(data_test)
 # Remove the original landuse, geo, geom and related with missing data
 data_test[,c('LANDUSE', 'GEO', 'GEOM', 'g15', 'gm2', 'l4', 'gm7', 'g14', 'gm5')] <- list(NULL)
-# data_test <- data_test[ ,c(-7, -8, -7, -39, -40, -19)] <- list(NULL)
-# data_test <- data_test[,-7] # to remove landuse
-# data_test <- data_test[,-8] # to remove GEO
-# data_test <- data_test[,-7] # to remove Geom
-# data_test <- data_test[,-39] # to remove g15
-# data_test <- data_test[,-40] # to remove gm2
-# data_test <- data_test[,-19] # to remove l4
-# data_test <- data_test[,-43] # to remove gm7
-# data_test <- data_test[,-37] # to remove g14
-# 
-# data_test <- data_test[,-19] # to remove l4
-# data_test <- data_test[,-37] # to remove g14
-# data_test <- data_test[,-37] # to remove g15
-# data_test <- data_test[,-38] # to remove gm2
-# data_test <- data_test[,-40] # to remove gm5
-# data_test <- data_test[,-41] # to remove gm7
+# data_test <- data_test[,-7] # to remove by position
+
 
 summary(data_test)
 data_test <- na.omit(data_test)
